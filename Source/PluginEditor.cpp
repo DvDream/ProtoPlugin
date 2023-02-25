@@ -25,9 +25,9 @@ ProtoPluginAudioProcessorEditor::ProtoPluginAudioProcessorEditor (ProtoPluginAud
     addAndMakeVisible(invertButton);
     invertAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "invertPhase", invertButton));
 
-    sweepChannels.setButtonText("Sweep L/R Channels");
-    addAndMakeVisible(sweepChannels);
-    invertAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "sweepChannels", sweepChannels));
+    swapChannels.setButtonText("Swap L/R Channels");
+    addAndMakeVisible(swapChannels);
+    invertAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "swapChannels", swapChannels));
 
     setSize(paramSliderWidth + paramLabelWidth, juce::jmax(100, paramControlHeight * 2));
 }
@@ -55,6 +55,6 @@ void ProtoPluginAudioProcessorEditor::resized()
 
     invertButton.setBounds(r.removeFromTop(paramControlHeight));
 
-    sweepChannels.setBounds(r.removeFromTop(paramControlHeight));
+    swapChannels.setBounds(r.removeFromTop(paramControlHeight));
 
 }
