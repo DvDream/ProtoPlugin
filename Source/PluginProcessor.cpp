@@ -24,6 +24,8 @@ ProtoPluginAudioProcessor::ProtoPluginAudioProcessor()
 {
     gainParameter = apvtsParameters.getRawParameterValue("gain");
     phaseParameter = apvtsParameters.getRawParameterValue("invertPhase");
+    swapChannelsParameter = apvtsParameters.getRawParameterValue("swapChannels");
+
 }
 
 ProtoPluginAudioProcessor::~ProtoPluginAudioProcessor()
@@ -230,6 +232,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout ProtoPluginAudioProcessor::c
     
     params.push_back(std::make_unique<juce::AudioParameterBool>("invertPhase",
         "Invert Phase",
+        false));
+
+    params.push_back(std::make_unique<juce::AudioParameterBool>("swapChannels",
+        "Swap L/R Channels",
         false));
 
     return { params.begin(), params.end() };
