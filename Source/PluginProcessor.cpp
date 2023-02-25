@@ -22,6 +22,8 @@ ProtoPluginAudioProcessor::ProtoPluginAudioProcessor()
                        ), apvtsParameters(*this, nullptr, juce::Identifier("PluginAPVTSParameters"), createParameters())
 #endif
 {
+    gainParameter = apvtsParameters.getRawParameterValue("gain");
+    phaseParameter = apvtsParameters.getRawParameterValue("invertPhase");
 }
 
 ProtoPluginAudioProcessor::~ProtoPluginAudioProcessor()
@@ -95,6 +97,9 @@ void ProtoPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    auto phase = *phaseParameter < 0.5f ? -1.0 : 1.0f;
+    // we initialise the previousGain value here [2]
+    previousGain = *gainParameter * phase;
 }
 
 void ProtoPluginAudioProcessor::releaseResources()
@@ -154,7 +159,20 @@ void ProtoPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        auto phase = *phaseParameter < 0.5f ? -1.0f : 1.0f;
+        // perform the gain ramp to be more smooth [3]
+        //auto currentGain = gain->get();
+        auto currentGain = *gainParameter * phase; // We multiply the gain by the pase parameter
+        if (currentGain == previousGain)
+        {
+            // The AudioSampleBuffer::applyGain() function applies our gain value to all samples across all channels in the buffer.
+            buffer.applyGain(*gainParameter);
+        }
+        else
+        {
+            buffer.applyGainRamp(0, buffer.getNumSamples(), previousGain, currentGain);
+            previousGain = currentGain;
+        }
     }
 }
 
