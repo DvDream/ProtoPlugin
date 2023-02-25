@@ -19,11 +19,11 @@ ProtoPluginAudioProcessorEditor::ProtoPluginAudioProcessorEditor (ProtoPluginAud
     addAndMakeVisible(gainLabel);
 
     addAndMakeVisible(gainSlider);
-    gainAttachment.reset(new SliderAttachment(audioProcessor.apvts, "gain", gainSlider));
+    gainAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "gain", gainSlider));
 
     invertButton.setButtonText("Invert Phase");
     addAndMakeVisible(invertButton);
-    invertAttachment.reset(new ButtonAttachment(audioProcessor.apvts, "invertPhase", invertButton));
+    invertAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "invertPhase", invertButton));
 
     setSize(paramSliderWidth + paramLabelWidth, juce::jmax(100, paramControlHeight * 2));
 }
