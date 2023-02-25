@@ -56,11 +56,16 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    juce::AudioProcessorValueTreeState apvtsParameters;
+    juce::AudioProcessorValueTreeState apvtsParameters ;
 
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     
+    float previousGain;
+
+    std::atomic<float>* phaseParameter = nullptr;
+    std::atomic<float>* gainParameter = nullptr;
+    std::atomic<float>* swapChannelsParameter = nullptr;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProtoPluginAudioProcessor)
 };
