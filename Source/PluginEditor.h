@@ -17,6 +17,14 @@
 class ProtoPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
+
+    enum
+    {
+        paramControlHeight = 40,
+        paramLabelWidth = 80,
+        paramSliderWidth = 300
+    };
+
     ProtoPluginAudioProcessorEditor (ProtoPluginAudioProcessor&);
     ~ProtoPluginAudioProcessorEditor() override;
 
@@ -28,6 +36,16 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     ProtoPluginAudioProcessor& audioProcessor;
+    
+    typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+    typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
+    
+    juce::Label gainLabel;
+    juce::Slider gainSlider;
+    std::unique_ptr<SliderAttachment> gainAttachment;
+
+    juce::ToggleButton invertButton;
+    std::unique_ptr<ButtonAttachment> invertAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProtoPluginAudioProcessorEditor)
 };

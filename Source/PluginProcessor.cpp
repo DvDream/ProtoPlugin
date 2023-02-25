@@ -19,7 +19,7 @@ ProtoPluginAudioProcessor::ProtoPluginAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), apvts(*this, nullptr, juce::Identifier("PluginAPVTSParameters"), createParameters())
 #endif
 {
 }
@@ -188,4 +188,22 @@ void ProtoPluginAudioProcessor::setStateInformation (const void* data, int sizeI
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new ProtoPluginAudioProcessor();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout ProtoPluginAudioProcessor::createParameters()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("gain", // parameterID
+        "Gain", // parameter name
+        // 0.0f,   // minimum value
+        //1.0f,   // maximum value
+        juce::NormalisableRange<float>(0.0f, 1.0f),
+        0.5f)); // default value
+    
+    params.push_back(std::make_unique<juce::AudioParameterBool>("invertPhase",
+        "Invert Phase",
+        false));
+
+    return { params.begin(), params.end() };
 }
