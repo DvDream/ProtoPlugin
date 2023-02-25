@@ -47,5 +47,8 @@ private:
     juce::ToggleButton invertButton;
     std::unique_ptr<ButtonAttachment> invertAttachment;
 
+    juce::ToggleButton sweepChannels;
+    std::unique_ptr<ButtonAttachment> sweepChannelsAttachment;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProtoPluginAudioProcessorEditor)
 };
