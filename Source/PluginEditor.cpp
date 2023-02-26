@@ -27,7 +27,7 @@ ProtoPluginAudioProcessorEditor::ProtoPluginAudioProcessorEditor (ProtoPluginAud
 
     swapChannels.setButtonText("Swap L/R Channels");
     addAndMakeVisible(swapChannels);
-    invertAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "swapChannels", swapChannels));
+    swapChannelsAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "swapChannels", swapChannels));
 
     setSize(paramSliderWidth + paramLabelWidth, juce::jmax(100, paramControlHeight * 2));
 }
