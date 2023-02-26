@@ -221,22 +221,23 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 juce::AudioProcessorValueTreeState::ParameterLayout ProtoPluginAudioProcessor::createParameters()
 {
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("gain", // parameterID
+    layout.add(std::make_unique<juce::AudioParameterFloat>("gain", // parameterID
         "Gain", // parameter name
         // 0.0f,   // minimum value
         //1.0f,   // maximum value
         juce::NormalisableRange<float>(0.0f, 1.0f),
         0.5f)); // default value
     
-    params.push_back(std::make_unique<juce::AudioParameterBool>("invertPhase",
+    layout.add(std::make_unique<juce::AudioParameterBool>("invertPhase",
         "Invert Phase",
         false));
 
-    params.push_back(std::make_unique<juce::AudioParameterBool>("swapChannels",
+    layout.add(std::make_unique<juce::AudioParameterBool>("swapChannels",
         "Swap L/R Channels",
         false));
 
-    return { params.begin(), params.end() };
+    /*Now we have our parameters setup in our parameters layout and we can pass it to the aptvs constructor*/
+    return layout;
 }
