@@ -63,7 +63,7 @@ private:
     
     float previousGain;
 
-    std::atomic<float>* phaseParameter = nullptr;
+    std::atomic<float>* invertPhaseParameter = nullptr;
     std::atomic<float>* gainParameter = nullptr;
     std::atomic<float>* swapChannelsParameter = nullptr;
     //==============================================================================

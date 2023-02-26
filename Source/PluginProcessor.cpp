@@ -19,11 +19,11 @@ ProtoPluginAudioProcessor::ProtoPluginAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), apvtsParameters(*this, nullptr, juce::Identifier("PluginAPVTSParameters"), createParameters())
+                       ), apvtsParameters(*this, nullptr, "APVTS", createParameters())
 #endif
 {
     gainParameter = apvtsParameters.getRawParameterValue("gain");
-    phaseParameter = apvtsParameters.getRawParameterValue("invertPhase");
+    invertPhaseParameter = apvtsParameters.getRawParameterValue("invertPhase");
     swapChannelsParameter = apvtsParameters.getRawParameterValue("swapChannels");
 
 }
@@ -99,7 +99,7 @@ void ProtoPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    auto phase = *phaseParameter < 0.5f ? -1.0 : 1.0f;
+    auto phase = *invertPhaseParameter < 0.5f ? -1.0 : 1.0f;
     // we initialise the previousGain value here [2]
     previousGain = *gainParameter * phase;
 }
