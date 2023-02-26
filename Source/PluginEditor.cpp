@@ -21,15 +21,21 @@ ProtoPluginAudioProcessorEditor::ProtoPluginAudioProcessorEditor (ProtoPluginAud
     addAndMakeVisible(gainSlider);
     gainAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "gain", gainSlider));
 
-    invertButton.setButtonText("Invert Phase");
+    addAndMakeVisible(leftChannelLevelSlider);
+    leftChannelLevelAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "leftChannelLevel", leftChannelLevelSlider));
+    
+    addAndMakeVisible(rightChannelLevelSlider);
+    rightChannelLevelAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "rightChannelLevel", rightChannelLevelSlider));
+
     addAndMakeVisible(invertButton);
+    invertButton.setButtonText("Invert Phase");
     invertAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "invertPhase", invertButton));
 
-    swapChannels.setButtonText("Swap L/R Channels");
     addAndMakeVisible(swapChannels);
+    swapChannels.setButtonText("Swap L/R Channels");
     swapChannelsAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "swapChannels", swapChannels));
 
-    setSize(paramSliderWidth + paramLabelWidth, juce::jmax(100, paramControlHeight * 2));
+    setSize(paramSliderWidth + paramLabelWidth, juce::jmax(200, paramControlHeight * 2));
 }
 
 ProtoPluginAudioProcessorEditor::~ProtoPluginAudioProcessorEditor()
@@ -52,6 +58,10 @@ void ProtoPluginAudioProcessorEditor::resized()
     auto gainRect = r.removeFromTop(paramControlHeight);
     gainLabel.setBounds(gainRect.removeFromLeft(paramLabelWidth));
     gainSlider.setBounds(gainRect);
+
+    leftChannelLevelSlider.setBounds(r.removeFromTop(paramControlHeight));
+
+    rightChannelLevelSlider.setBounds(r.removeFromTop(paramControlHeight));
 
     invertButton.setBounds(r.removeFromTop(paramControlHeight));
 

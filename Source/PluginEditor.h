@@ -50,5 +50,11 @@ private:
     juce::ToggleButton swapChannels;
     std::unique_ptr<ButtonAttachment> swapChannelsAttachment;
 
+    juce::Slider leftChannelLevelSlider;
+    std::unique_ptr<SliderAttachment> leftChannelLevelAttachment;
+
+    juce::Slider rightChannelLevelSlider;
+    std::unique_ptr<SliderAttachment> rightChannelLevelAttachment;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProtoPluginAudioProcessorEditor)
 };

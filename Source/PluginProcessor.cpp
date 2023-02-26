@@ -25,7 +25,8 @@ ProtoPluginAudioProcessor::ProtoPluginAudioProcessor()
     gainParameter = apvtsParameters.getRawParameterValue("gain");
     invertPhaseParameter = apvtsParameters.getRawParameterValue("invertPhase");
     swapChannelsParameter = apvtsParameters.getRawParameterValue("swapChannels");
-
+    leftChannelLevelParameter = apvtsParameters.getRawParameterValue("leftChannelLevel");
+    rightChannelLevelParameter = apvtsParameters.getRawParameterValue("rightChannelLevel");
 }
 
 ProtoPluginAudioProcessor::~ProtoPluginAudioProcessor()
@@ -179,12 +180,15 @@ void ProtoPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 	if (currentGain == previousGain)
 	{
 		// The AudioSampleBuffer::applyGain() function applies our gain value to all samples across all channels in the buffer.
-		buffer.applyGain(0, buffer.getNumSamples(), *gainParameter);
+		buffer.applyGain(0, 0, buffer.getNumSamples(), *gainParameter * (*leftChannelLevelParameter));
+        buffer.applyGain(1, 0, buffer.getNumSamples(), *gainParameter * (*rightChannelLevelParameter));
+
 	}
 	else
 	{
-		buffer.applyGain(0, buffer.getNumSamples(), currentGain);
-		previousGain = currentGain;
+        buffer.applyGain(0, 0, buffer.getNumSamples(), *gainParameter * (*leftChannelLevelParameter));
+        buffer.applyGain(1, 0, buffer.getNumSamples(), *gainParameter * (*rightChannelLevelParameter));
+        previousGain = currentGain;
 	}
 }
 
@@ -233,21 +237,37 @@ juce::AudioProcessorValueTreeState::ParameterLayout ProtoPluginAudioProcessor::c
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("gain", // parameterID
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "gain", // parameterID
         "Gain", // parameter name
         // 0.0f,   // minimum value
         //1.0f,   // maximum value
         juce::NormalisableRange<float>(0.0f, 1.0f),
         0.5f)); // default value
     
-    layout.add(std::make_unique<juce::AudioParameterBool>("invertPhase",
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        "invertPhase",
         "Invert Phase",
         false));
 
-    layout.add(std::make_unique<juce::AudioParameterBool>("swapChannels",
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        "swapChannels",
         "Swap L/R Channels",
         false));
 
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "leftChannelLevel",
+        "L Ch. Level",
+        0.0f,
+        1.0f,
+        1.0f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        "rightChannelLevel",
+        "R Ch. Level",
+        0.0f,
+        1.0f,
+        1.0f));
     /*Now we have our parameters setup in our parameters layout and we can pass it to the aptvs constructor*/
     return layout;
 }
