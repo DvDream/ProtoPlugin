@@ -21,8 +21,8 @@ public:
     enum
     {
         paramControlHeight = 40,
-        paramLabelWidth = 80,
-        paramSliderWidth = 300
+        paramLabelWidth = 50,
+        paramSliderWidth = 200
     };
 
     ProtoPluginAudioProcessorEditor (ProtoPluginAudioProcessor&);
@@ -50,11 +50,15 @@ private:
     juce::ToggleButton swapChannels;
     std::unique_ptr<ButtonAttachment> swapChannelsAttachment;
 
-    juce::Slider leftChannelLevelSlider;
-    std::unique_ptr<SliderAttachment> leftChannelLevelAttachment;
+    //juce::Slider leftChannelLevelSlider;
+    //std::unique_ptr<SliderAttachment> leftChannelLevelAttachment;
 
-    juce::Slider rightChannelLevelSlider;
-    std::unique_ptr<SliderAttachment> rightChannelLevelAttachment;
+    //juce::Slider rightChannelLevelSlider;
+    //std::unique_ptr<SliderAttachment> rightChannelLevelAttachment;
+    juce::Label leftChannelLabel;
+    juce::Label rightChannelLabel;
+    juce::Slider balanceChannelsLevelSlider;
+    std::unique_ptr<SliderAttachment> balanceChannelsLevelAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProtoPluginAudioProcessorEditor)
 };

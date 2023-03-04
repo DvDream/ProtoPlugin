@@ -21,11 +21,15 @@ ProtoPluginAudioProcessorEditor::ProtoPluginAudioProcessorEditor (ProtoPluginAud
     addAndMakeVisible(gainSlider);
     gainAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "gain", gainSlider));
 
-    addAndMakeVisible(leftChannelLevelSlider);
-    leftChannelLevelAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "leftChannelLevel", leftChannelLevelSlider));
-    
-    addAndMakeVisible(rightChannelLevelSlider);
-    rightChannelLevelAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "rightChannelLevel", rightChannelLevelSlider));
+    addAndMakeVisible(leftChannelLabel);
+    leftChannelLabel.setText("L+/R-", juce::dontSendNotification);
+    leftChannelLabel.attachToComponent(&balanceChannelsLevelSlider, true);
+
+    addAndMakeVisible(balanceChannelsLevelSlider);
+    balanceChannelsLevelAttachment.reset(new SliderAttachment(audioProcessor.apvtsParameters, "balanceChannelsLevel", balanceChannelsLevelSlider));
+
+    addAndMakeVisible(rightChannelLabel);
+    rightChannelLabel.setText("R+/L-", juce::dontSendNotification);
 
     addAndMakeVisible(invertButton);
     invertButton.setButtonText("Invert Phase");
@@ -35,7 +39,7 @@ ProtoPluginAudioProcessorEditor::ProtoPluginAudioProcessorEditor (ProtoPluginAud
     swapChannels.setButtonText("Swap L/R Channels");
     swapChannelsAttachment.reset(new ButtonAttachment(audioProcessor.apvtsParameters, "swapChannels", swapChannels));
 
-    setSize(paramSliderWidth + paramLabelWidth, juce::jmax(200, paramControlHeight * 2));
+    setSize(paramSliderWidth * 2, juce::jmax(200, paramControlHeight * 2));
 }
 
 ProtoPluginAudioProcessorEditor::~ProtoPluginAudioProcessorEditor()
@@ -57,11 +61,13 @@ void ProtoPluginAudioProcessorEditor::resized()
 
     auto gainRect = r.removeFromTop(paramControlHeight);
     gainLabel.setBounds(gainRect.removeFromLeft(paramLabelWidth));
+    gainRect.removeFromRight(paramLabelWidth);
     gainSlider.setBounds(gainRect);
 
-    leftChannelLevelSlider.setBounds(r.removeFromTop(paramControlHeight));
-
-    rightChannelLevelSlider.setBounds(r.removeFromTop(paramControlHeight));
+    auto balanceRect = r.removeFromTop(paramControlHeight);
+    leftChannelLabel.setBounds(balanceRect.removeFromLeft(paramLabelWidth));
+    rightChannelLabel.setBounds(balanceRect.removeFromRight(paramLabelWidth));
+    balanceChannelsLevelSlider.setBounds(balanceRect);
 
     invertButton.setBounds(r.removeFromTop(paramControlHeight));
 
