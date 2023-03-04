@@ -25,8 +25,9 @@ ProtoPluginAudioProcessor::ProtoPluginAudioProcessor()
     gainParameter = apvtsParameters.getRawParameterValue("gain");
     invertPhaseParameter = apvtsParameters.getRawParameterValue("invertPhase");
     swapChannelsParameter = apvtsParameters.getRawParameterValue("swapChannels");
-    leftChannelLevelParameter = apvtsParameters.getRawParameterValue("leftChannelLevel");
-    rightChannelLevelParameter = apvtsParameters.getRawParameterValue("rightChannelLevel");
+    //leftChannelLevelParameter = apvtsParameters.getRawParameterValue("leftChannelLevel");
+    //rightChannelLevelParameter = apvtsParameters.getRawParameterValue("rightChannelLevel");
+    balanceChannelsLevelParameter = apvtsParameters.getRawParameterValue("balanceChannelsLevel");
 }
 
 ProtoPluginAudioProcessor::~ProtoPluginAudioProcessor()
@@ -102,7 +103,9 @@ void ProtoPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // initialisation that you need..
     auto phase = *invertPhaseParameter < 0.5f ? -1.0 : 1.0f;
     // we initialise the previousGain value here [2]
-    previousGain = *gainParameter * phase;
+    //previousGain = *gainParameter * phase;
+    previousLeftGain = *gainParameter * (1 - *balanceChannelsLevelParameter) * phase;
+    previousRightGain = *gainParameter * *balanceChannelsLevelParameter * phase;
 }
 
 void ProtoPluginAudioProcessor::releaseResources()
@@ -162,34 +165,38 @@ void ProtoPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 	auto phase = *invertPhaseParameter < 0.5f ? -1.0f : 1.0f;
 	bool wantToSwapChannels = *swapChannelsParameter < 0.5f ? false : true;
 
-	auto currentGain = *gainParameter * phase; // We multiply the gain by the pase parameter
+    auto currentLeftGain = *gainParameter * (1 - *balanceChannelsLevelParameter) * phase;
+    auto currentRightGain = *gainParameter * (* balanceChannelsLevelParameter) * phase;
 
 	int numChannels = buffer.getNumChannels();
 	int numSamples = buffer.getNumSamples();
 
-	if (wantToSwapChannels)
-	{
 		for (int i = 0; i < numSamples; i++)
-		{
-			float temp = buffer.getSample(0, i);
-			buffer.setSample(0, i, buffer.getSample(1, i));
-			buffer.setSample(1, i, temp);
+		{   
+            if (wantToSwapChannels)
+            {
+                float temp = buffer.getSample(0, i);
+                buffer.setSample(0, i, buffer.getSample(1, i));
+                buffer.setSample(1, i, temp);
+            }
+
 		}
-	}
 
-	if (currentGain == previousGain)
-	{
-		// The AudioSampleBuffer::applyGain() function applies our gain value to all samples across all channels in the buffer.
-		buffer.applyGain(0, 0, buffer.getNumSamples(), *gainParameter * (*leftChannelLevelParameter));
-        buffer.applyGain(1, 0, buffer.getNumSamples(), *gainParameter * (*rightChannelLevelParameter));
+        if (currentLeftGain == previousLeftGain && currentRightGain == previousRightGain)
+        {
+            // The AudioSampleBuffer::applyGain() function applies our gain value to all samples across all channels in the buffer.
+            buffer.applyGain(0, 0, buffer.getNumSamples(), currentLeftGain);
+            buffer.applyGain(1, 0, buffer.getNumSamples(), currentRightGain);
 
-	}
-	else
-	{
-        buffer.applyGain(0, 0, buffer.getNumSamples(), *gainParameter * (*leftChannelLevelParameter));
-        buffer.applyGain(1, 0, buffer.getNumSamples(), *gainParameter * (*rightChannelLevelParameter));
-        previousGain = currentGain;
-	}
+        }
+        else
+        {
+            buffer.applyGainRamp(0, 0, buffer.getNumSamples(), previousLeftGain, currentLeftGain);
+            buffer.applyGainRamp(1, 0, buffer.getNumSamples(), previousRightGain, currentRightGain);
+            previousLeftGain = currentLeftGain;
+            previousRightGain = currentRightGain;
+        }
+
 }
 
 //==============================================================================
@@ -255,19 +262,26 @@ juce::AudioProcessorValueTreeState::ParameterLayout ProtoPluginAudioProcessor::c
         "Swap L/R Channels",
         false));
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>(
-        "leftChannelLevel",
-        "L Ch. Level",
-        0.0f,
-        1.0f,
-        1.0f));
+    //layout.add(std::make_unique<juce::AudioParameterFloat>(
+    //    "leftChannelLevel",
+    //    "L Ch. Level",
+    //    0.0f,
+    //    1.0f,
+    //    1.0f));
+
+    //layout.add(std::make_unique<juce::AudioParameterFloat>(
+    //    "rightChannelLevel",
+    //    "R Ch. Level",
+    //    0.0f,
+    //    1.0f,
+    //    1.0f));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
-        "rightChannelLevel",
-        "R Ch. Level",
+        "balanceChannelsLevel",
+        "Balance Channels Level",
         0.0f,
         1.0f,
-        1.0f));
+        0.5f));
     /*Now we have our parameters setup in our parameters layout and we can pass it to the aptvs constructor*/
     return layout;
 }

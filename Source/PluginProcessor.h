@@ -61,13 +61,13 @@ public:
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     
-    float previousGain;
+    float previousLeftGain; 
+    float previousRightGain; 
 
     std::atomic<float>* invertPhaseParameter = nullptr;
     std::atomic<float>* gainParameter = nullptr;
     std::atomic<float>* swapChannelsParameter = nullptr;
-    std::atomic<float>* leftChannelLevelParameter = nullptr;
-    std::atomic<float>* rightChannelLevelParameter = nullptr;
+    std::atomic<float>* balanceChannelsLevelParameter = nullptr;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProtoPluginAudioProcessor)
